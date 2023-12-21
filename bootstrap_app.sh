@@ -90,7 +90,7 @@ else
   terraform -chdir="./2-github-codestar/" init \
   -backend-config="bucket=${app_name}-terraform-state-bucket" \
   -backend-config="region=${aws_region}"
-  terraform -chdir="./2-github-codestar/" apply -var aws_region=$aws_region
+  terraform -chdir="./2-github-codestar/" apply -var app_name=$app_name -var aws_region=$aws_region
 
   echo "Cloning Repo locally and installing React Vite"
   # clone repo and install react vite
