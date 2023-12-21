@@ -112,7 +112,6 @@ else
   # capture repository url and name and create codestar (go activate it)
   repository_clone_url=$(terraform -chdir="./2-github-codestar/" output -raw repository_clone_url)
   repository_name=$(terraform -chdir="./2-github-codestar/" output -raw repository_name)  
-  codestar_connection=$(terraform -chdir="./2-github-codestar/" output -raw codestar_connection)  
   codestar_connection_arn=$(terraform -chdir="./2-github-codestar/" output -raw codestar_connection_arn)  
 
   echo "Now navigate to your AWS Console and activate your CodeStar Connection: ${codestar_connection}"
@@ -120,7 +119,7 @@ else
   read enter
 
   printf "%s" "Provide the name of the owner of the GitHub Repo"
-  read github_repo_order
+  read github_repo_owner
 
   echo "Using the activated CodeStar Connection to create Code Pipeline and a CloudFront Distribution"
   terraform -chdir="./3-pipeline-codefront/" init \
@@ -129,7 +128,7 @@ else
   terraform -chdir="./3-pipeline-codefront/" apply -var app_name=$app_name \
   -var aws_region=$aws_region \
   -var codestar_connection_arn=$codestar_connection_arn \
-  -var github_owner=$github_repo_order \
+  -var github_owner=$github_repo_owner \
   -var github_repo_name=$repository_name
 
   domain_name=$(terraform -chdir="./3-pipeline-codefront/" output -raw domain_name)
