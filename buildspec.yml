@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo Installing source NPM dependencies...
+      - npm install
+
+  pre_build:
+    commands:
+      - echo Pre-build phase...
+
+  build:
+    commands:
+      - echo Building the React application...
+      - npm run build
+
+  post_build:
+    commands:
+      - echo Post-build phase...
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'dist'
+
