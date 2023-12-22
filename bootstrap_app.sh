@@ -92,6 +92,11 @@ else
   -backend-config="region=${aws_region}"
   terraform -chdir="./2-github-codestar/" apply -var app_name=$app_name -var aws_region=$aws_region
 
+  # capture repository url and name and create codestar (go activate it)
+  repository_clone_url=$(terraform -chdir="./2-github-codestar/" output -raw repository_clone_url)
+  repository_name=$(terraform -chdir="./2-github-codestar/" output -raw repository_name)  
+  codestar_connection_arn=$(terraform -chdir="./2-github-codestar/" output -raw codestar_connection_arn)  
+  
   echo "Cloning Repo locally and installing React Vite"
   # clone repo and install react vite
   git clone $repository_clone_url
@@ -109,10 +114,6 @@ else
   cd ..
   rm -rf $repository_name
 
-  # capture repository url and name and create codestar (go activate it)
-  repository_clone_url=$(terraform -chdir="./2-github-codestar/" output -raw repository_clone_url)
-  repository_name=$(terraform -chdir="./2-github-codestar/" output -raw repository_name)  
-  codestar_connection_arn=$(terraform -chdir="./2-github-codestar/" output -raw codestar_connection_arn)  
 
   echo "Now navigate to your AWS Console and activate your CodeStar Connection: ${codestar_connection}"
   printf "%s" "Then press Enter to continue"
