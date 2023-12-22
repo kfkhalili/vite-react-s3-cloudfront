@@ -8,10 +8,14 @@ resource "github_repository" "vite_react_app" {
   visibility = "private"
 }
 
-output "repository_clone_url" {
+output "github_repo_clone_url" {
   value = github_repository.vite_react_app.ssh_clone_url
 }
 
-output "repository_name" {
+output "github_repo_full_name" {
   value = github_repository.vite_react_app.full_name
+}
+
+output "github_repo_name" {
+  value = github_repository.vite_react_app.name
 }

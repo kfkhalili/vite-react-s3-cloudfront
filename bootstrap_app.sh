@@ -63,15 +63,17 @@ if [ "$destroy" = true ]; then
   sleep 1
   echo "COMMENCING DESTRUCTION!"
 
-  repository_clone_url=$(terraform -chdir="./2-github-codestar/" output -raw repository_clone_url)
-  repository_name=$(terraform -chdir="./2-github-codestar/" output -raw repository_name)  
+  github_repo_clone_url=$(terraform -chdir="./2-github-codestar/" output -raw github_repo_clone_url)
+  github_repo_name=$(terraform -chdir="./2-github-codestar/" output -raw github_repo_name)  
+  github_repo_full_name=$(terraform -chdir="./2-github-codestar/" output -raw github_repo_full_name)  
   codestar_connection=$(terraform -chdir="./2-github-codestar/" output -raw codestar_connection)  
   codestar_connection_arn=$(terraform -chdir="./2-github-codestar/" output -raw codestar_connection_arn)  
   
   terraform -chdir="./3-pipeline-codefront/" destroy -auto-approve -var app_name=$app_name \
   -var aws_region=$aws_region \
   -var codestar_connection_arn=$codestar_connection_arn \
-  -var github_repo_name=$repository_name
+  -var github_repo_name=$github_repo_name \
+  -var github_repo_full_name=$github_repo_full_name
 
   terraform -chdir="./2-github-codestar/" destroy -auto-approve -var aws_region=$aws_region
 
@@ -92,14 +94,15 @@ else
   terraform -chdir="./2-github-codestar/" apply -var app_name=$app_name -var aws_region=$aws_region
 
   # capture repository url and name and create codestar (go activate it)
-  repository_clone_url=$(terraform -chdir="./2-github-codestar/" output -raw repository_clone_url)
-  repository_name=$(terraform -chdir="./2-github-codestar/" output -raw repository_name)  
+  github_repo_clone_url=$(terraform -chdir="./2-github-codestar/" output -raw github_repo_clone_url)
+  github_repo_name=$(terraform -chdir="./2-github-codestar/" output -raw github_repo_name)
+  github_repo_full_name=$(terraform -chdir="./2-github-codestar/" output -raw github_repo_full_name)  
   codestar_connection_arn=$(terraform -chdir="./2-github-codestar/" output -raw codestar_connection_arn)  
 
   echo "Cloning Repo locally and installing React Vite"
   # clone repo and install react vite
-  git clone $repository_clone_url
-  cd $repository_name
+  git clone $github_repo_clone_url
+  cd $github_repo_name
   brew install nvm
   nvm install --lts && nvm use --lts
   npm create vite@latest ./ -- --template react
@@ -111,7 +114,7 @@ else
   git commit -m "Bootstrap vite"
   git push
   cd ..
-  rm -rf $repository_name
+  rm -rf $github_repo_name
 
 
   echo "Now navigate to your AWS Console and activate your CodeStar Connection: ${codestar_connection}"
@@ -125,7 +128,9 @@ else
   terraform -chdir="./3-pipeline-codefront/" apply -var app_name=$app_name \
   -var aws_region=$aws_region \
   -var codestar_connection_arn=$codestar_connection_arn \
-  -var github_repo_name=$repository_name
+  -var github_repo_name=$github_repo_name \
+  -var github_repo_full_name=$github_repo_full_name
+
 
   domain_name=$(terraform -chdir="./3-pipeline-codefront/" output -raw domain_name)
   echo "Cloudfront Distribution created on ${domain_name}"
