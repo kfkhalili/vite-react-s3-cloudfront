@@ -4,7 +4,7 @@ variable "github_token" {
 
 resource "github_repository" "vite_react_app" {
   name = "${lower(replace(var.app_name, " ", "-"))}-vite-react-app"
-  description = "${title(replace(var.app_name, "-", ""))} React Vite - Frontend Repository"
+  description = "${title(replace(var.app_name, "-", " "))} React Vite - Frontend Repository"
   visibility = "private"
 }
 
