@@ -13,3 +13,7 @@ variable "github_repo_full_name" {
 variable "github_repo_name" {
   description = "Github Repository Name"
 }
+
+variable "codestar_connection_arn" {
+  description = "CodeStar Connection ARN"
+}

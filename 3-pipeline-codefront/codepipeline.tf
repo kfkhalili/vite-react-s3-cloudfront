@@ -36,7 +36,7 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
           "codestar-connections:UseConnection"
         ],
         Effect = "Allow",
-        Resource = var.CodeStarSourceConnection.arn
+        Resource = var.codestar_connection_arn
       },
       {
         Action = [
@@ -47,7 +47,9 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
         Effect = "Allow",
         Resource = [
           "arn:aws:s3:::${aws_s3_bucket.codebuild_artifacts.bucket}/*",
-          "arn:aws:s3:::${aws_s3_bucket.codebuild_artifacts.bucket}"
+          "arn:aws:s3:::${aws_s3_bucket.codebuild_artifacts.bucket}",
+          "arn:aws:s3:::${aws_s3_bucket.app_static.bucket}",
+          "arn:aws:s3:::${aws_s3_bucket.app_static.bucket}/*"
         ]
       }
     ]
@@ -74,7 +76,7 @@ resource "aws_codepipeline" "frontend_pipeline" {
       output_artifacts = ["source_output"]
 
       configuration = {
-        ConnectionArn    = var.CodeStarSourceConnection.arn
+        ConnectionArn    = var.codestar_connection_arn
         FullRepositoryId = var.github_repo_full_name
         BranchName       = "main"
       }
@@ -111,7 +113,6 @@ resource "aws_codepipeline" "frontend_pipeline" {
       configuration = {
         BucketName = aws_s3_bucket.app_static.bucket
         Extract    = "true"
-        ObjectKey  = "deployed-artifact"
       }
     }
   }
