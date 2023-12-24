@@ -1,7 +1,3 @@
-provider "aws" {
-  # Specify your provider configuration here, if necessary
-}
-
 resource "aws_iam_role" "codebuild_role" {
   name = "${var.app_name}-codebuild-role"
 
@@ -68,8 +64,6 @@ resource "aws_codebuild_project" "codebuild_project" {
     compute_type = "BUILD_GENERAL1_SMALL"
     image        = "aws/codebuild/amazonlinux2-aarch64-standard:3.0"
     type         = "ARM_CONTAINER"
-    image_pull_credentials_type = "CODEBUILD"
-    privileged_mode = false
   }
 
   source {
