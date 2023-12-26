@@ -121,6 +121,7 @@ else
   printf "%s" "Then press Enter to continue"
   read enter
 
+  # 3-pipeline-codefront
   echo "Using the activated CodeStar Connection to create Code Pipeline and a CloudFront Distribution"
   terraform -chdir="./3-pipeline-codefront/" init \
   -backend-config="bucket=${app_name}-terraform-state-bucket" \
@@ -134,5 +135,14 @@ else
 
   domain_name=$(terraform -chdir="./3-pipeline-codefront/" output -raw domain_name)
   echo "Cloudfront Distribution created on ${domain_name}"
+
+  # 4-cognito-secrets-manager
+  terraform -chdir="./4-cognito-secrets-manager/" init \
+  -backend-config="bucket=${app_name}-terraform-state-bucket" \
+  -backend-config="region=${aws_region}"
+
+  terraform -chdir="./4-cognito-secrets-manager/" apply -var app_name=$app_name \
+  -var aws_region=$aws_region
+
   
 fi
