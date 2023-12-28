@@ -1,0 +1,31 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+  
+type Query {
+    # No queries defined yet
+}
+  
+type Mutation {
+    registerUser(email: String!, password: String!): UserResponse!
+    loginUser(email: String!, password: String!): AuthResponse!
+}
+  
+type UserResponse {
+    success: Boolean!
+    message: String!
+    user: User
+}
+  
+type AuthResponse {
+    success: Boolean!
+    message: String!
+    token: String
+}
+  
+type User {
+    id: ID!
+    email: String!
+}
+  
