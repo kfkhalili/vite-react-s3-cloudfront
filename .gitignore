@@ -40,3 +40,5 @@ terraform.rc
 
 **/.DS_Store
 **/*.ignore
+**/node_modules/*
+**/*.zip
