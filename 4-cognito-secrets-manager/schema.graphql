@@ -4,12 +4,12 @@ schema {
 }
   
 type Query {
-    # No queries defined yet
+    getUser(id: ID!): User
 }
   
 type Mutation {
     registerUser(email: String!, password: String!): UserResponse!
-    loginUser(email: String!, password: String!): AuthResponse!
+    authUser(email: String!, password: String!): AuthResponse!
 }
   
 type UserResponse {

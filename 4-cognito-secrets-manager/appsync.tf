@@ -9,7 +9,6 @@ resource "aws_appsync_graphql_api" "appsync_api" {
   }
 
   schema = file("./schema.graphql")
-
 }
 
 resource "aws_appsync_datasource" "register_user_datasource" {
@@ -24,13 +23,13 @@ resource "aws_appsync_datasource" "register_user_datasource" {
   service_role_arn = aws_iam_role.appsync_service_role.arn
 }
 
-resource "aws_appsync_datasource" "login_user_datasource" {
+resource "aws_appsync_datasource" "auth_user_datasource" {
   api_id = aws_appsync_graphql_api.appsync_api.id
-  name   = "${local.app_name_title_case_together}LoginUserLambdaDatasource"
+  name   = "${local.app_name_title_case_together}AuthUserLambdaDatasource"
   type   = "AWS_LAMBDA"
 
   lambda_config {
-    function_arn = aws_lambda_function.login_user_lambda.arn
+    function_arn = aws_lambda_function.auth_user_lambda.arn
   }
 
   service_role_arn = aws_iam_role.appsync_service_role.arn
@@ -66,7 +65,7 @@ resource "aws_iam_role_policy" "appsync_service_policy" {
         Effect = "Allow",
         Resource = [
           aws_lambda_function.register_user_lambda.arn,
-          aws_lambda_function.login_user_lambda.arn,
+          aws_lambda_function.auth_user_lambda.arn,
         ]
       },
       // Add other permissions as needed
@@ -93,11 +92,11 @@ EOF
   response_template = "$util.toJson($context.result)"
 }
 
-resource "aws_appsync_resolver" "login_user_resolver" {
+resource "aws_appsync_resolver" "auth_user_resolver" {
   api_id      = aws_appsync_graphql_api.appsync_api.id
   type        = "Mutation"
-  field       = "loginUser"
-  data_source = aws_appsync_datasource.login_user_datasource.name
+  field       = "authUser"
+  data_source = aws_appsync_datasource.auth_user_datasource.name
 
   request_template  = <<EOF
 {
