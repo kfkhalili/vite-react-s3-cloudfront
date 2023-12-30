@@ -1,3 +1,16 @@
+#### PACKAGE LAMBDA CODE ####
+data "archive_file" "registerUserCognitoZip" {
+    type        = "zip"
+    source_file = "./registerUserCognito/index.js"
+    output_path = "./registerUserCognito.zip"
+}
+
+data "archive_file" "authUserCognitoZip" {
+    type        = "zip"
+    source_file = "./authUserCognito/index.js"
+    output_path = "./authUserCognito.zip"
+}
+
 #### COGNITO LAMBDAS ####
 resource "aws_lambda_function" "register_user_lambda" {
   function_name = "${var.app_name}_registerUserCognito"
@@ -5,8 +18,8 @@ resource "aws_lambda_function" "register_user_lambda" {
 
   handler       = "index.handler"
   runtime       = "nodejs20.x"
-  filename      = "./lambda_registerUserCognito.zip"
-  source_code_hash = filebase64sha256("./lambda_registerUserCognito.zip")
+  filename      = data.archive_file.registerUserCognitoZip.output_path
+  source_code_hash = filebase64sha256(data.archive_file.registerUserCognitoZip.output_path)
 
 
   environment {
@@ -16,14 +29,14 @@ resource "aws_lambda_function" "register_user_lambda" {
   }
 }
 
-resource "aws_lambda_function" "login_user_lambda" {
-  function_name = "${var.app_name}_loginUserCognito"
+resource "aws_lambda_function" "auth_user_lambda" {
+  function_name = "${var.app_name}_authUserCognito"
   role          = aws_iam_role.lambda_cognito_role.arn
 
   handler       = "index.handler"
   runtime       = "nodejs20.x"
-  filename      = "./lambda_loginUserCognito.zip"
-  source_code_hash = filebase64sha256("./lambda_loginUserCognito.zip")
+  filename      = data.archive_file.authUserCognitoZip.output_path
+  source_code_hash = filebase64sha256(data.archive_file.authUserCognitoZip.output_path)
 
   environment {
     variables = {
