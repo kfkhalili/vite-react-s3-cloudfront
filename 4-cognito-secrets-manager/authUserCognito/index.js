@@ -1,6 +1,6 @@
 const { CognitoIdentityProviderClient, InitiateAuthCommand } = require("@aws-sdk/client-cognito-identity-provider");
 
-const client = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION }); // Set this in your Lambda environment variables
+const client = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION });
 
 exports.handler = async (event) => {
     try {
