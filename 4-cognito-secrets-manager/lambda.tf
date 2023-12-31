@@ -45,6 +45,24 @@ resource "aws_lambda_function" "auth_user_lambda" {
   }
 }
 
+#### APPSYNC PERMISSION ####
+resource "aws_lambda_permission" "allow_appsync_invoke_register_user" {
+  statement_id  = "AllowAppSyncInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.register_user_lambda.function_name
+  principal     = "appsync.amazonaws.com"
+  source_arn    = aws_appsync_graphql_api.appsync_api.arn
+}
+
+resource "aws_lambda_permission" "allow_appsync_invoke_auth_user" {
+  statement_id  = "AllowAppSyncInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.auth_user_lambda.function_name
+  principal     = "appsync.amazonaws.com"
+  source_arn    = aws_appsync_graphql_api.appsync_api.arn
+}
+
+
 #### IAM ROLES ####
 resource "aws_iam_role" "lambda_cognito_role" {
   name = "${var.app_name}_lambda_cognito_role"
