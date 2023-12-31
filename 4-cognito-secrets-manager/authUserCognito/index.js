@@ -4,28 +4,43 @@ const client = new CognitoIdentityProviderClient({ region: process.env.AWS_REGIO
 
 exports.handler = async (event) => {
     try {
-        const { email, password } = event;
-        const authParams = {
-            ClientId: process.env.COGNITO_CLIENT_ID, // Set this in your Lambda environment variables
-            AuthFlow: "USER_PASSWORD_AUTH",
-            AuthParameters: {
-                USERNAME: email,
-                PASSWORD: password
-            }
+        const { identifier, password } = event;
+        // Check if the identifier is in an email format
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+
+        // Prepare the authentication parameters
+        let authParams = {
+            'PASSWORD': password
         };
 
-        const authCommand = new InitiateAuthCommand(authParams);
+        // Set USERNAME or email based on the identifier type
+        authParams[isEmail ? 'email' : 'USERNAME'] = identifier;
+
+        const params = {
+            AuthFlow: 'USER_PASSWORD_AUTH',
+            ClientId: process.env.COGNITO_CLIENT_ID,
+            AuthParameters: authParams,
+        };
+
+        const authCommand = new InitiateAuthCommand(params);
         const response = await client.send(authCommand);
 
         return { 
             statusCode: 200,
-            body: JSON.stringify({ message: "Authentication successful", token: response.AuthenticationResult.IdToken })
+            body: JSON.stringify({
+                success: true,
+                message: "Authentication successful", 
+                token: response.AuthenticationResult?.IdToken 
+            })
         };
     } catch (error) {
         console.error(error);
         return { 
             statusCode: 500,
-            body: JSON.stringify({ message: error.message })
+            body: JSON.stringify({ 
+                success: false,
+                message: error.message,
+                token: null })
         };
     }
 };

@@ -1,7 +1,18 @@
-
 # Cognito User Pool
 resource "aws_cognito_user_pool" "user_pool" {
   name = "${var.app_name}-user-pool"
+  alias_attributes = [ "email" ]
+
+  schema {
+    attribute_data_type = "String"
+    name                = "email"
+    required            = true
+
+    string_attribute_constraints {
+      min_length = 7
+      max_length = 255
+    }
+  }
 }
 
 # Cognito User Pool Client

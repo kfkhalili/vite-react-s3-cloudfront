@@ -8,17 +8,16 @@ type Query {
 }
   
 type Mutation {
-    registerUser(email: String!, password: String!): UserResponse!
-    authUser(email: String!, password: String!): AuthResponse!
+    registerUser(username: String!, email: String!, password: String!): RegisterUserResponse! @aws_iam
+    authUser(identifier: String!, password: String!): AuthResponse! @aws_iam
 }
   
-type UserResponse {
+type RegisterUserResponse @aws_iam {
     success: Boolean!
     message: String!
-    user: User
 }
   
-type AuthResponse {
+type AuthResponse @aws_iam {
     success: Boolean!
     message: String!
     token: String

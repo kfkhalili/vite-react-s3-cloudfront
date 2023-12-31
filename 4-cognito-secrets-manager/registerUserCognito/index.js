@@ -1,13 +1,14 @@
-const { CognitoIdentityProviderClient, SignUpCommand } = require("@aws-sdk/client-cognito-identity-provider");
+const { CognitoIdentityProviderClient, SignUpCommand, AdminGetUserCommand } = require("@aws-sdk/client-cognito-identity-provider");
 
 const client = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION });
 
 exports.handler = async (event) => {
     try {
-        const { email, password } = event;
+        const { username, email, password } = event;
         const signUpParams = {
             ClientId: process.env.COGNITO_CLIENT_ID, // Set this in your Lambda environment variables
-            Username: email,
+            Username: username,
+            Email: email,
             Password: password,
             UserAttributes: [
                 { Name: "email", Value: email }
@@ -19,13 +20,19 @@ exports.handler = async (event) => {
 
         return { 
             statusCode: 200,
-            body: JSON.stringify({ message: "User registered successfully" })
+            body: JSON.stringify({ 
+                success: true,
+                message: "User registered successfully",
+            })
         };
     } catch (error) {
         console.error(error);
         return { 
             statusCode: 500,
-            body: JSON.stringify({ message: error.message })
+            body: JSON.stringify({ 
+                success: false,
+                message: error.message,
+            })
         };
     }
 };
