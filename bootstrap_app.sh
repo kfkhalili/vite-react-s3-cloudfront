@@ -136,7 +136,7 @@ else
   domain_name=$(terraform -chdir="./3-pipeline-codefront/" output -raw domain_name)
   echo "Cloudfront Distribution created on ${domain_name}"
 
-  # 4-cognito-secrets-manager
+  # 4-cognito-lambda-appsync
   terraform -chdir="./4-cognito-secrets-manager/" init \
   -backend-config="bucket=${app_name}-terraform-state-bucket" \
   -backend-config="region=${aws_region}"
